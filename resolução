@@ -1,0 +1,267 @@
+~~~~
+var lista = repeat(10,flip)
+//1.1
+var verif = sum(lista) // quantos são true
+//1.2
+var conta = function(){
+  if(verif == 10){
+    console.log("Todos sao True")
+  } else{
+    console.log("Nop")
+  }
+}
+//conta()
+
+//1.3
+var conta2 = function(){
+  if(verif != 0){
+    console.log("Sim")
+  } else{
+    console.log("Nop")
+  }
+}
+//conta2()
+
+//-------------------------------------------------------------------------------------------
+//---------------------------------------------------------"""-------------------------------
+//cenas uteis
+var id = function(x){return x}
+//all(id,lista)
+
+var array = [1,2,3,4]
+var pred = function(x){return x<2}
+//all(pred,array)
+//any
+//filter(pred,array)
+//map(pred,array)
+//mapN aplica a função aos elementos N-1
+
+//--------------------------------------------------------------------------------------------
+//-----------------------------------------------------------""""-----------------------------
+
+//2
+
+var lan = function(){return viz(repeat(1000,flip))}
+lan()
+
+//3
+//retorna flip com a probabilidade escolhida
+var moeda_viciada = function(prob){
+  return function(){
+    return flip(prob)
+  }
+}
+//fazer o histograma com as probabilidades escolhidas
+viz(repeat(1000,moeda_viciada(0.7)))
+
+//4 alinea a
+
+var cinco_vezes = function(){
+  return function(){
+    var aux = repeat(5,moeda_viciada(0.7))
+    return sum(aux)
+  }
+}
+
+//cinco_vezes()()
+
+//4 alinea b
+
+var bernouli = function(prob){
+  return function(){
+    return bernoulli(prob)
+  }
+}
+var cinco_vezes2 = function(){
+  return function(){
+    var aux2 = repeat(5,bernouli(0.7))
+    return sum(aux2)
+  }
+}
+
+//funçao binomial que retorna o numero de lançamentos verdadeiros
+var rev = binomial(0.7,5)
+console.log(rev)
+
+//5
+
+var dados = function() {
+  var a = flip(0.5)
+  var b = flip(0.5)
+  var c = flip(0.5)
+  var d = flip(0.5)
+  var e = flip(0.5)
+  var f = flip(0.5)
+  return a + b + c + d + e + f;
+};
+
+
+var dados2 = function(){
+  return categorical([1/6,1/6,1/6,1/6,1/6,1/6], ['face1','face2','face3','face4','face5','face6'])
+}
+
+//lançar 100 vezes o dado
+//viz(repeat(100,dados2))
+
+
+//6
+var div = function(x,y) {return x/y}
+
+//funçao exponencial a^n
+
+var b = function(){return 6}  //este e o a
+var a = repeat(2,b) //este e o n
+
+var interar = function(x,acc){
+  return x*acc
+}
+
+var exp = reduce(interar,1,a)
+
+var dadosn = function(){
+  var n = 2
+  return categorical([1/6,1/6,1/6,1/6,1/6,1/6], ['facedoble','facedoble','facedoble','facedoble','facedoble','facedoble'])
+}
+
+var dadosn = function(){
+  return (categorical([1/6,1/6,1/6,1/6,1/6,1/6], ['face1','face2','face3','face4','face5','face6']) + categorical([1/6,1/6,1/6,1/6,1/6,1/6], ['face1','face2','face3','face4','face5','face6']))
+}
+
+//viz(repeat(100000,dadosn))
+
+//7------->exemplos de distribuições
+
+var dado = function(){
+  return randomInteger(6) + 1
+}
+
+var modelo = function(){
+  var d1 = dado()
+  var d2 = dado()
+  return d1 + d2 == 8   //probabilidade de sair 8
+}
+
+//viz.table(Infer(modelo))
+
+var modelo2 = function(){
+  var d1 = dado()
+  var d2 = dado()
+  condition (d1 + d2 == 8)  //d1 + d2 = 8
+  return {d1,d2}
+}
+
+//viz.table(Infer(modelo2))
+
+var modelo3 = function(){
+  var d1 = dado()
+  var d2 = dado()
+  condition (d1 >= 3)  //d1 maior que 3
+  //condition (d1 + d2 == 8)
+  return d1 + d2 < 6
+}
+
+//viz.table(Infer(modelo3))
+
+var modelo4 = function(){
+  var d1 = dado()
+  var d2 = dado()
+  condition(d1 >= 3 || d2 >= 3)
+  condition(d1 + d2 < 6)  //d1 + d2 = 8
+  return {d1,d2}
+}
+
+viz.table(Infer(modelo4))
+
+//ex7----->sortear cartas com reposição
+
+var vale = mapN(function(x) {return x+2},9).concat([10,10,10,11])
+var cartas = vale.concat(vale).concat(vale).concat(vale)
+//display(cartas)
+
+var carta = function() {categorical({vs:cartas})}
+var modelo5 = function(){
+  var c1 = carta()
+  var c2 = carta()
+  var total =  c1 + c2
+  return total == 22? 12: total
+}
+//Infer(modelo5)
+
+var modelo6 = function(){
+  var c1 = carta()
+  var c2 = carta()
+  var totalp =  c1 + c2
+  var total = totalp == 22? 12: total
+  return total >= 16
+}
+
+//viz.table(Infer(modelo))
+
+var modelo7 = function(){
+  var c1 = carta()
+  var c2 = carta()
+  var c3 = carta()
+  var totalp =  c1 + c2
+  var total2 = totalp == 22? 12: totalp
+  var total3 = total2 + c3
+  condition(total3 > 21)
+  return total2
+}
+
+//viz.table(Infer(modelo7))
+
+var modelo8 = function(){
+  var c1 = carta()
+  var c2 = carta()
+  var c3 = carta()
+  var totalp =  c1 + c2
+  var total2 = (totalp == 22)? 12: totalp
+  var totalD = 10 + c3
+  return {ganhar : total2 > totalD, cartas : total2}
+}
+
+//viz.table(Infer(modelo8))
+
+//7----------->continuação do exercício
+// 11 -> Rei
+// 12 -> Duque
+// 13 -> Rainha
+// 14 -> As
+var vale = mapN(function(x) {return x+2},9).concat([11,12,13,14])
+var cartas2 = vale.concat(vale).concat(vale).concat(vale)
+//display(cartas)
+
+//var carta2 = function() {categorical({vs:cartas2})}
+
+//var baralha = function(){
+  //var cartas2 = vale.concat(vale).concat(vale).concat(vale)
+  //return cartas2
+//}
+
+var saca = function(){
+  var ret = carta2()
+  var nova = remove(ret,cartas2)
+  console.log(ret)
+  //display(nova)
+  return nova
+}
+
+//saca()
+
+//ex8
+var saca2 = function(t){
+  var ts = function(){categorical({vs:cartas2})}
+  var len = t.length
+  if(len == 0){
+    return("Acabou")
+  }
+  else{
+    var ret = ts()
+    var nova = remove(ret,t)
+    console.log(ret)
+    saca2(nova)
+  }
+}
+
+saca2(cartas2)
+~~~~
