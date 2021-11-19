@@ -1,0 +1,105 @@
+//var covd = flip(0.01)
+//var positivo = covd ? flip(0.7):flip(0.1)
+
+//viz.hist(Infer(function(){return positivo}))
+~~~~
+
+#Ex.1
+
+
+~~~~
+var tem_covid = Infer({method: 'enumerate'},
+  function () {
+    var Covid = flip(0.01)
+    var testepositivo = Covid ? flip(0.7) : flip(0.1)
+    return {testepositivo: testepositivo}
+});
+viz(tem_covid)
+~~~~
+
+#Ex.2
+
+~~~~
+var wich_test = Infer({method: 'enumerate'}, 
+ function(){
+   var Covid = flip(0.01)
+   var fez_testeA = Covid ? flip(0.7) : flip(0.1)
+   var fez_testeB = Covid ? flip(0.9) : flip(0.01)
+   var ligou = flip(0.8)
+   var final = ligou ? fez_testeA : fez_testeB
+   return {final:final}
+  
+})
+
+viz(wich_test)
+~~~~
+
+#Ex.3
+
+~~~~
+var covid_sabendo_que_tem_teste_positivo = Infer({method: 'enumerate'},
+  function () {
+    var Covid = flip(0.01)
+    var Nao_Covid = flip(0.99)
+    var teste_positivo = (Covid && flip(0.7)) || (Nao_Covid && flip(0.1))
+    condition(teste_positivo)
+    return {Covid: Covid}
+});
+viz(covid_sabendo_que_tem_teste_positivo)
+~~~~
+
+#Ex4
+
+alínea a
+
+~~~~
+var wich_testB = Infer({method: 'enumerate'}, 
+ function(){
+   var Covid = flip(0.01)
+   var fez_testeA = Covid ? flip(0.7) : flip(0.1)
+   var fez_testeB = Covid ? flip(0.9) : flip(0.01)
+   var ligou = flip(0.8)
+   var final = ligou ? fez_testeA : fez_testeB
+   condition(final)
+   return {Covid:Covid}
+  
+})
+
+viz(wich_testB)
+~~~~
+
+alínea b
+
+~~~~
+var wich_testB = Infer({method: 'enumerate'}, 
+ function(){
+   var Covid = flip(0.01)
+   var fez_testeA = Covid ? flip(0.7) : flip(0.1)
+   var fez_testeB = Covid ? flip(0.9) : flip(0.01)
+   var ligou = flip(0.8)
+   var final = ligou ? fez_testeA : fez_testeB
+   condition(final)
+   return {fez_testeA:fez_testeA}
+  
+})
+
+viz(wich_testB)
+~~~~
+
+alínea c
+
+~~~~
+var wich_testC = Infer({method: 'enumerate'}, 
+ function(){
+   var Covid = flip(0.01)
+   var fez_testeA = Covid ? flip(0.7) : flip(0.1)
+   var fez_testeB = Covid ? flip(0.9) : flip(0.01)
+   var ligou = flip(0.8)
+   var final = ligou ? fez_testeA : fez_testeB
+   condition(final)
+   return {fez_testeA:fez_testeA,Covid:Covid}
+  
+})
+
+viz(wich_testC)
+~~~~
