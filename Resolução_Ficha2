@@ -1,0 +1,254 @@
+Ficha 2 - Resolução
+Ex.1
+
+~~~~
+//numero de faces do dado
+var prob = function(faces,lanc){
+  var d = repeat(faces,function(){return 1/faces})
+  var l = multinomial({ps:d,n:lanc})
+  var pair = function(x, y) { return [x+1, y]; };
+  display(mapIndexed(pair,l))
+  viz.hist(mapIndexed(pair,l))
+}
+
+prob(3,100)
+~~~~
+
+Ex.2
+
+~~~~
+//var d = repeat(6,function(){return 1/6})
+//var l = multinomial({ps:d,n:100})
+var func = function(l){
+  if(l>1){
+    return 1
+  }
+  return l
+}
+var prob = function(faces,lanc){
+  var d = repeat(faces,function(){return 1/faces})
+  var l = multinomial({ps:d,n:lanc})
+  var pair = function(x, y) { return [x+1, y]; };
+  //display(mapIndexed(pair,l))
+  //viz.hist(mapIndexed(pair,l))
+  display(l)
+  display(map(func,l))
+}
+prob(2,5)
+~~~~
+
+Ex.3
+
+~~~~
+//exploding dice
+
+var dado = function(){
+  var face = randomInteger(10) + 1
+  if(face == 10){return 10+dado()}
+  return face
+}
+
+var t = function(dados,limite){
+  var dados = repeat(dados, dado)
+  var a = sum(sort(dados, gt).slice(0, limite))
+  return a
+}
+
+//viz(repeat(100,function(){return t(5,2)}))
+//display( t(5,2))
+~~~~
+
+Ex.4
+
+~~~~
+//gera um TN entre [1-9]
+var new_try = function(){
+  var TN = randomInteger(8)+2
+  return TN
+}
+
+//atirar um dado ao ar n vezes
+var atira = function(n){
+  var dado = randomInteger(10)+1
+  var a = repeat(n,function(){return randomInteger(10)+1})
+  return a
+}
+
+var sucessos = function(t,n){
+  var TN = t()
+  var array = atira(n)
+  //display(TN)
+  //display(array)
+  //display(array)
+  var a = filter(function(x){return x>TN},array)
+  //display(a)
+  //display(e)
+  var succ = a.length
+  //display(succ)
+  return [succ,TN]
+}
+
+var y = sucessos(new_try,4)
+~~~~
+
+Ex.5
+
+~~~~
+var wod = function(){
+  var TN = randomInteger(8)+2
+  var dado = randomInteger(10)+1
+  var sucesso = 1
+  if(TN<dado){return "sucess"}
+  else{return "botch"}
+}
+
+var a = repeat(10,function(){return wod()})
+//var pair = function(x, y) { return [x+1, y]; };
+//display(mapIndexed(pair,a))
+
+//gera um TN entre [1-9]
+var new_try = function(){
+  var TN = randomInteger(8)+2
+  return TN
+}
+
+//atirar um dado ao ar n vezes
+var atira = function(n){
+  var dado = randomInteger(10)+1
+  var a = repeat(n,function(){return randomInteger(10)+1})
+  return a
+}
+
+var sucessos = function(t,n){
+  var TN = t()
+  var array = atira(n)
+  //display(TN)
+  //display(array)
+  //display(array)
+  var a = filter(function(x){return x>TN},array)
+  //display(a)
+  var e = filter(function(x){return x<TN},array)
+  //display(e)
+  var succ = a.length
+  var p = e.length
+  //display(p)
+  //display(succ)
+  var final = succ-p
+  //display(succ)
+  return [final,TN]
+}
+
+var fun = function(){
+  return sucessos(new_try,5)
+}
+//fun()
+viz.heatMap(Infer(fun))
+~~~~
+
+Ex.6
+
+~~~~
+var sucessos = function(n){
+  var dado = randomInteger(10)+1
+  var a = repeat(n,function(){return randomInteger(10)+1})
+  var TN = 9
+  //display(a)
+  
+  var b = filter(function(x){return x>TN},a)
+  //display(a)
+ 
+  var i = filter(function(x){return x<TN},a)
+  //display(in)
+  var succ = b.length
+  var p = i.length
+  var final = succ-p
+  //display(succ)
+  return [final,n]
+}
+var c = 60
+var fun = function(){
+  return sucessos(c)
+}
+
+viz.heatMap(Infer(fun))
+~~~~
+
+Ex.7
+
+~~~~
+var dado = function(){
+  var face = randomInteger(10) + 1
+  if(face == 10){return 10+dado()}
+  return face
+}
+
+var t = function(dados,limite){
+  var dados = repeat(dados, dado)
+  var a = sum(sort(dados, gt).slice(0, limite))
+  return a
+}
+
+//numeros de jogadores corresponde ao numero de repetições
+
+var contested_rolled = function(players,dados,limites){
+  var jogo = repeat(players,function(){return t(dados,limites)})
+  return [jogo]
+}
+
+var p = contested_rolled(2,5,2)
+display(p)
+
+var inverte = function(t){
+  if(t[0][0] < t[0][1]){
+    return [t[0][1],t[0][0]]
+  }
+}
+
+//var inverte = function()
+//display(contested_rolled(play,5,2))
+//var i = sort(contested_rolled(play,5,2))
+//display(i)
+//viz(i)
+~~~~
+
+Ex.8
+
+~~~~
+//gera um TN entre [1-9]
+var new_try = function(){
+  var TN = randomInteger(8)+2
+  return TN
+}
+
+//atirar um dado ao ar n vezes
+var atira = function(n){
+  var dado = randomInteger(10)+1
+  var a = repeat(n,function(){return randomInteger(10)+1})
+  return a
+}
+
+var sucessos = function(t,n){
+  var TN = t()
+  var array = atira(n)
+  //display(TN)
+  //display(array)
+  //display(array)
+  var a = filter(function(x){return x>TN},array)
+  //display(a)
+  //display(e)
+  var succ = a.length
+  //display(succ)
+  return [succ,TN]
+}
+
+var contested_roll = function(players,n_dados){
+  var jogo = repeat(players,function(){return sucessos(new_try,n_dados)})
+  return jogo
+}
+
+var inverte = function(t){
+  if(t[0][0] < t[0][1]){
+    return [t[0][1],t[0][0]]
+  }
+}
+~~~~
