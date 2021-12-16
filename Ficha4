@@ -1,0 +1,74 @@
+~~~~
+var modelo = function(){
+  var num = 5
+  return _.values(dirichlet(ones([5,1])).data)
+}
+
+var martelada = function(){
+  var num = 5
+  var L = mapN(function(T) {uniform(0,1)},num)
+  print(L)
+  var S = sum(L)
+  
+  map(function(p) {p/S},L)
+}
+
+martelada()
+~~~~
+
+~~~~
+var sondagens =  function(t){
+  var prop = {"ps":36.34,"psd":27.76,"cdu":6.33,"cds":4.22, "be":9.52,"pan":3.32,"chega":1.29,"il":1.29, "livre":1.09, "indecisos":8.84}
+  var pares = _.toPairs(prop)
+  print(pares)
+  var tuplo = _.unzip(pares)
+  var partidos = tuplo[0]
+  var percentagens = tuplo[1]  
+  var a = map(function(p) {p/100},percentagens)
+  var numeros_votos = multinomial({ps: a, n: t})
+  var junta = _.zip(partidos,numeros_votos)
+  var junta_final = _.fromPairs(junta)
+  return junta_final
+}
+
+var r = 3000
+var Sondagem = sondagens(r)
+
+var aleatorio = function(){
+  var num = 10
+  var L = mapN(function(T) {uniform(0,1)},num)
+  var S = sum(L)
+  var a = map(function(p) {p/S},L)
+  var dist = Multinomial({ps: a, n: r})
+  observe(dist,_.values(Sondagem))
+  var partido = _.keys(Sondagem)
+  var junta1 = _.zip(partido,a)
+  var junta = _.fromPairs(junta1)
+  return junta
+}
+
+var x = Infer({method:'MCMC',samples: 10000,model:function(){ return aleatorio()}})
+
+viz.marginals(x)
+
+var estimar_intervalo = function(dist, margem, low, high) {
+  expectation(marginalize(dist, margem), function(p) {low < p && p < high})
+}
+
+var HDI = function(dist, margem, low, high, delta) {
+  var p = estimar_intervalo(dist, margem, low, high)
+  if (p <= 0.95) return [low, high]
+  var A  = estimar_intervalo(dist, margem, low + delta, high)
+  var B  = estimar_intervalo(dist, margem, low, high - delta)
+  return A > B ? HDI(dist, margem, low + delta, high, delta) : HDI(dist, margem, low, high - delta, delta)
+}
+
+var print_intervals = function(dist, margens) {
+  map(function(m) {
+    print(m + ": " + HDI(dist, m, 0, 1, 0.005))
+  }, margens)
+  
+}
+
+print_intervals(x,_.keys(Sondagem))
+~~~~
